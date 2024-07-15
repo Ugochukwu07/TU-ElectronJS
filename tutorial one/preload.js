@@ -1,5 +1,3 @@
-const { contextBridge, ipcRenderer } = require('electron/renderer')
-
 window.addEventListener('DOMContentLoaded', () => {
     const replaceText = (selector, text) => {
       const element = document.getElementById(selector)
@@ -11,20 +9,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 })
 
-contextBridge.exposeInMainWorld('electron', {
-  notificationApi: {
-    sendNotification(message) {
-      console.log(message);
-      ipcRenderer.send('notify', message)
-    }
-  },
-  batteryApi: {
-
-  },
-  filesApi: {
-
-  }
-})
+const { contextBridge, ipcRenderer } = require('electron/renderer')
 
 contextBridge.exposeInMainWorld('electronAPI', {
   getImage: (callback) => ipcRenderer.on('get-image', callback),

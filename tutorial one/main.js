@@ -1,10 +1,8 @@
-const { app, BrowserWindow, Menu, shell, ipcMain, Notification } = require('electron')
+const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
 const { type } = require('node:os')
 const path = require('node:path')
-const { electron } = require('node:process')
 
 const isMac = process.platform === 'darwin'
-const isDev = !app.isPackaged
 
 const menuItems = [
   ...(isMac
@@ -166,13 +164,9 @@ Menu.setApplicationMenu(menu)
 
 const createWindow = () => {
     const win = new BrowserWindow({
-      width: 1000,
+      width: 800,
       height: 600,
-      backgroundColor: "white",
       webPreferences: {
-        nodeIntegration: false,
-        worldSafeExecuteJavaScript: true,
-        contextIsolation: true,
         preload: path.join(__dirname, 'preload.js')
       }
     })
@@ -184,11 +178,6 @@ const createWindow = () => {
 
     win.loadFile('index.html')
 }
-if(isDev){
-  require('electron-reload')(__dirname, {
-    electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
-  })
-}
 
 app.whenReady().then(() => {
     createWindow()
@@ -196,10 +185,6 @@ app.whenReady().then(() => {
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) createWindow()
     })
-})
-
-ipcMain.on('notify', (_, message) => {
-  new Notification({title: "Notification", body: message}).show()
 })
 
 app.on('window-all-closed', () => {
